@@ -5,31 +5,57 @@ import (
 )
 
 type ProductRepo struct {
-	bucket *bolt.Bucket
+	db *bolt.DB
 }
 
-func NewProductRepo(bucket *bolt.Bucket) *ProductRepo {
-	return &ProductRepo{bucket}
+func NewProductRepo(db *bolt.DB) *ProductRepo {
+	return &ProductRepo{db}
 }
 
 func (r *ProductRepo) GetNextId() (*int, error) {
-	id, err := r.bucket.NextSequence()
-	if err != nil {
+	var productId int
+
+	if err := r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("product"))
+
+		id, err := b.NextSequence()
+		if err != nil {
+			return err
+		}
+		productId = int(id)
+
+		return nil
+	}); err != nil {
 		return nil, err
 	}
 
-	productId := int(id)
 	return &productId, nil
 }
 
 func (r *ProductRepo) PutProduct(idBytes, productBytes []byte) error {
-	return r.bucket.Put(idBytes, productBytes)
+	return r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("product"))
+		return b.Put(idBytes, productBytes)
+	})
 }
 
-func (r *ProductRepo) GetProduct(idBytes []byte) []byte {
-	return r.bucket.Get(idBytes)
+func (r *ProductRepo) GetProduct(idBytes []byte) (*[]byte, error) {
+	var result []byte
+
+	if err := r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("product"))
+		result = b.Get(idBytes)
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
 
 func (r *ProductRepo) DeleteProduct(idBytes []byte) error {
-	return r.bucket.Delete(idBytes)
+	return r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("product"))
+		return b.Delete(idBytes)
+	})
 }

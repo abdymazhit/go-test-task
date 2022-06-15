@@ -33,8 +33,12 @@ func (s *ProductIndexService) GetProductIdByName(name string) (*int, error) {
 		return nil, err
 	}
 
-	productIdBytes := s.repo.GetProductIdByName(productNameBytes)
-	productId, err := s.encoderService.decodeProductId(productIdBytes)
+	productIdBytes, err := s.repo.GetProductIdByName(productNameBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	productId, err := s.encoderService.decodeProductId(*productIdBytes)
 	if err != nil {
 		return nil, err
 	}

@@ -38,8 +38,12 @@ func (s *ProductService) GetProduct(id int) (*model.Product, error) {
 		return nil, err
 	}
 
-	productBytes := s.repo.GetProduct(productIdBytes)
-	product, err := s.encoderService.decodeProduct(productBytes)
+	productBytes, err := s.repo.GetProduct(productIdBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	product, err := s.encoderService.decodeProduct(*productBytes)
 	if err != nil {
 		return nil, err
 	}

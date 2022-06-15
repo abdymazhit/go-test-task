@@ -7,13 +7,13 @@ import (
 type Product interface {
 	GetNextId() (*int, error)
 	PutProduct(id, product []byte) error
-	GetProduct(id []byte) []byte
+	GetProduct(idBytes []byte) (*[]byte, error)
 	DeleteProduct(id []byte) error
 }
 
 type ProductIndex interface {
 	PutProductIndex(name, id []byte) error
-	GetProductIdByName(name []byte) []byte
+	GetProductIdByName(nameBytes []byte) (*[]byte, error)
 	DeleteProductIndex(name []byte) error
 }
 
@@ -22,9 +22,9 @@ type Repository struct {
 	ProductIndex
 }
 
-func NewRepository(productsBucket, productIndexBucket *bolt.Bucket) *Repository {
+func NewRepository(db *bolt.DB) *Repository {
 	return &Repository{
-		Product:      NewProductRepo(productsBucket),
-		ProductIndex: NewProductIndex(productIndexBucket),
+		Product:      NewProductRepo(db),
+		ProductIndex: NewProductIndex(db),
 	}
 }
