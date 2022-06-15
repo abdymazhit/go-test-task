@@ -14,3 +14,7 @@ type EditProductRequest struct {
 type DeleteProductRequest struct {
 	Id int `json:"id"`
 }
+
+type SearchProductRequest struct {
+	SearchName string `json:"searchName"`
+}

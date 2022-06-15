@@ -35,7 +35,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repos := repository.NewRepository(productsBucket, productIndexBucket)
+	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
