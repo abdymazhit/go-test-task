@@ -18,6 +18,7 @@ type Product interface {
 	GetNextId() (*int, error)
 	PutProduct(id int, product model.Product) error
 	GetProduct(id int) (*model.Product, error)
+	GetProducts() (*[]model.Product, error)
 	DeleteProduct(id int) error
 }
 

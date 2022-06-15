@@ -51,6 +51,24 @@ func (s *ProductService) GetProduct(id int) (*model.Product, error) {
 	return product, nil
 }
 
+func (s *ProductService) GetProducts() (*[]model.Product, error) {
+	productsBytes, err := s.repo.GetProducts()
+	if err != nil {
+		return nil, err
+	}
+
+	var products []model.Product
+	for _, productBytes := range *productsBytes {
+		product, err := s.encoderService.decodeProduct(productBytes)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *product)
+	}
+
+	return &products, nil
+}
+
 func (s *ProductService) DeleteProduct(id int) error {
 	productIdBytes, err := s.encoderService.encodeProductId(id)
 	if err != nil {

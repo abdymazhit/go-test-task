@@ -8,6 +8,7 @@ type Product interface {
 	GetNextId() (*int, error)
 	PutProduct(id, product []byte) error
 	GetProduct(idBytes []byte) (*[]byte, error)
+	GetProducts() (*[][]byte, error)
 	DeleteProduct(id []byte) error
 }
 

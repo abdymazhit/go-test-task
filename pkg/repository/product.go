@@ -53,6 +53,25 @@ func (r *ProductRepo) GetProduct(idBytes []byte) (*[]byte, error) {
 	return &result, nil
 }
 
+func (r *ProductRepo) GetProducts() (*[][]byte, error) {
+	var values [][]byte
+
+	if err := r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("product"))
+
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			values = append(values, v)
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return &values, nil
+}
+
 func (r *ProductRepo) DeleteProduct(idBytes []byte) error {
 	return r.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("product"))
