@@ -18,19 +18,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var productsBucket, productIndexBucket *bolt.Bucket
 	if err = db.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("product"))
+		_, err := tx.CreateBucketIfNotExists([]byte("product"))
 		if err != nil {
 			return fmt.Errorf("create bucket: %s", err)
 		}
-		productsBucket = b
 
-		b, err = tx.CreateBucketIfNotExists([]byte("productIndex"))
+		_, err = tx.CreateBucketIfNotExists([]byte("productIndex"))
 		if err != nil {
 			return fmt.Errorf("create bucket: %s", err)
 		}
-		productIndexBucket = b
 
 		return nil
 	}); err != nil {

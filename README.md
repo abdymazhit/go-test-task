@@ -5,6 +5,12 @@ A simple CRUD site where you can add, edit and delete entries (products). Unusua
 * Key-value store (built-in key-value store) - [Bolt](https://github.com/boltdb/bolt) will be used as the database.
 * BoltDb will use [encoding/gob](https://pkg.go.dev/encoding/gob) as a data serializer instead of normal encoding/json.
 
+## Run
+
+```sh
+  go run cmd/main.go
+```
+
 ## Endpoints for web pages:
 
 - `/products`
