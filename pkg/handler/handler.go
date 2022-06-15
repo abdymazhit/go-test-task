@@ -16,7 +16,11 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *router.Router {
 	r := router.New()
 
-	r.GET("/q/product-search-by-name", h.ProductSearchHandler)
+	r.GET("/products", h.ProductsPageHandler)
+	r.GET("/product/add", h.ProductAddPageHandler)
+	r.GET("/product/edit/{productId}", h.ProductEditPageHandler)
+
+	r.POST("/q/product-search-by-name", h.ProductSearchHandler)
 
 	r.POST("/cmd/add-product", h.ProductAddHandler)
 	r.PUT("/cmd/edit-product", h.ProductEditHandler)

@@ -1,5 +1,7 @@
 package main
 
+//go:generate qtc -dir=../templates
+
 import (
 	"fmt"
 	"github.com/abdymazhit/go-test-task/pkg/handler"

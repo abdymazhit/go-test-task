@@ -1,0 +1,21 @@
+// Page of error
+
+{% code
+type ErrPage struct {
+    Error string
+}
+%}
+
+{% func (p *ErrPage) Body() %}
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+    <h5>{%s p.Error %}</h5>
+</body>
+
+</html>
+{% endfunc %}

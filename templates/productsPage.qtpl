@@ -1,0 +1,103 @@
+// Page of products
+
+{% import (
+    "github.com/abdymazhit/go-test-task/model"
+) %}
+
+{% code
+type ProductsPage struct {
+    Products []model.Product
+}
+%}
+
+{% func (p *ProductsPage) Body() %}
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+    <h5 id="error"></h5>
+
+    <a href="/product/add">
+        <button type="button">Создать продукт</button>
+    </a>
+
+    <br>
+    <br>
+
+    <form id="form">
+        <input type="text" name="searchName" placeholder="Name">
+        <button type="submit">Поиск</button>
+        <h5 id="searchedProduct"></h5>
+    </form>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+        </tr>
+
+        {% for _, product := range p.Products %}
+        <tr>
+            <td>{%d product.Id %}</td>
+            <td>{%s product.Name %}</td>
+            <td>{%d product.Price %}</td>
+            <td>
+                <a href="/product/edit/{%d product.Id %}">
+                    <button type="button">Редактировать</button>
+                </a>
+            </td>
+            <td>
+                <input type="button" value="Удалить" onclick="deleteProduct({%d product.Id %});" />
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+<script>
+    var form = document.getElementById('form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(form), result = {};
+        for (var entry of formData.entries()) {
+            result[entry[0]] = entry[1];
+        }
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST", "/q/product-search-by-name", false);
+        xmlHttp.send(JSON.stringify(result));
+
+        var jsonData = JSON.parse(xmlHttp.responseText);
+        console.log(jsonData)
+        if (jsonData.status === "failure") {
+            document.getElementById("error").innerHTML = jsonData.error;
+        } else {
+            document.getElementById("searchedProduct").innerText = "Id: " + jsonData.product.Id + ", Name: " + jsonData.product.Name + ", Price: " + jsonData.product.Price;
+        }
+    });
+</script>
+
+<script>
+    function deleteProduct(id) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("DELETE", "/cmd/delete-product", false);
+        xmlHttp.send(JSON.stringify({
+            "id": id,
+        }));
+
+        var jsonData = JSON.parse(xmlHttp.responseText);
+        if (jsonData.status === "failure") {
+            document.getElementById("error").innerHTML = jsonData.error;
+        } else {
+            window.location.replace("/products");
+        }
+    }
+</script>
+
+</html>
+{% endfunc %}
